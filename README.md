@@ -19,7 +19,8 @@ It runs multiple code generation test cases in Azure Machine Learning and produc
 - Try different temperature and top_p settings for the model
 - Add more test cases
 - Add more metrics beyond codeBLEU
-- Add metrics visualizations (using [matplotlib](https://matplotlib.org/) and mlflow support for storing images, for example)
+- Add metrics visualizations (using [matplotlib](https://matplotlib.org/) and mlflow support for [storing images](https://mlflow.org/docs/latest/python_api/mlflow.html#mlflow.log_image), for example)
 - Modularize the code... perhaps refactor job stages into [AML components](https://learn.microsoft.com/en-us/azure/machine-learning/concept-component?view=azureml-api-2)
 - Configure parallelized job stages
 - Trigger automated experiment runs based on updated test cases or experiment code (GH events, etc.)
+- Add visualizations for tracking results across multiple experiment runs, over time
