@@ -32,33 +32,36 @@ def main():
 
     results = pd.DataFrame(columns=['test_name', 'test_iteration', 'response_tokens', 'codebleu', 'ngram_match_score', 'weighted_ngram_match_score', 'syntax_match_score', 'dataflow_match_score'])
 
-    for subdir, _, _ in os.walk(args.test_cases_path):
+    for _, test_names, _ in os.walk(args.test_cases_path):
 
-        test_name = os.path.basename(subdir)
-        prompt_path = os.path.join(subdir, 'prompt.txt')
-        expected_path = os.path.join(subdir, 'expected.py')
+        for test_name in test_names:
 
-        with open(prompt_path, 'r') as prompt_file:
-            user_prompt = prompt_file.read()
+            test_case_path = os.path.join(args.test_cases_path, test_name)
+            prompt_path = os.path.join(test_case_path, 'prompt.txt')
+            expected_path = os.path.join(test_case_path, 'expected.py')
 
-        with open(expected_path, 'r') as expected_file:
-            expected_code = expected_file.read()
+            with open(prompt_path, 'r') as prompt_file:
+                user_prompt = prompt_file.read()
 
-        for iteration in range(code_gen_iterations):
+            with open(expected_path, 'r') as expected_file:
+                expected_code = expected_file.read()
 
-            actual_code, response_tokens = generate_code(system_prompt, user_prompt)
+            for iteration in range(code_gen_iterations):
 
-            with open('actual.py', 'w') as actual_file:
-                actual_file.write(actual_code)
-                mlflow.log_artifact(os.path.join(test_name, f'actual_{iteration}.py'))
+                actual_code, response_tokens = generate_code(system_prompt, user_prompt)
 
-            scores = calc_codebleu([expected_code], [actual_code], lang='python')
+                with open('actual.py', 'w') as actual_file:
+                    actual_file.write(actual_code)
 
-            scores['test_name'] = test_name
-            scores['test_iteration'] = iteration
-            scores['response_tokens'] = response_tokens
+                mlflow.log_artifact('actual.py', os.path.join('test_cases', test_name, f'actual_{iteration}.py'))
 
-            results = results.append(scores, ignore_index=True)
+                scores = calc_codebleu([expected_code], [actual_code], lang='python')
+
+                scores['test_name'] = test_name
+                scores['test_iteration'] = iteration
+                scores['response_tokens'] = response_tokens
+
+                results.loc[len(results)] = scores
 
     store_results(results)
 
@@ -93,8 +96,8 @@ def generate_code(system_prompt, user_prompt):
 
     llm_endpoint_path = os.environ['LLM_ENDPOINT_PATH']
     llm_cred = os.environ['LLM_CREDENTIAL']
-    llm_temp = int(os.environ['LLM_TEMP'])
-    llm_top_p = int(os.environ['LLM_TOP_P'])
+    llm_temp = float(os.environ['LLM_TEMP'])
+    llm_top_p = float(os.environ['LLM_TOP_P'])
 
     mlflow.log_param('llm_temp', llm_temp)
     mlflow.log_param('llm_top_p', llm_top_p)

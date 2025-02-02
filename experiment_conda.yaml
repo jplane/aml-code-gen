@@ -11,4 +11,4 @@ dependencies:
     - azureml-mlflow
     - codebleu
     - azure-ai-inference
-    - tree-sitter-python
+    - tree-sitter-python==0.21
