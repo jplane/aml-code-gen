@@ -1,0 +1,14 @@
+name: exp-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - numpy
+  - pip
+  - pandas
+  - pip:
+    - mlflow
+    - azureml-mlflow
+    - codebleu
+    - azure-ai-inference
+    - tree-sitter-python
