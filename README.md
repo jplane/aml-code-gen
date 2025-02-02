@@ -16,6 +16,7 @@ It runs multiple code generation test cases in Azure Machine Learning and produc
 ## Possible Enhancements
 
 - Make the code gen model configurable and create new experiments with different models
+- Try different temperature and top_p settings for the model
 - Add more test cases
 - Add more metrics beyond codeBLEU
 - Add metrics visualizations (using [matplotlib](https://matplotlib.org/) and mlflow support for storing images, for example)
